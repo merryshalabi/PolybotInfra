@@ -56,4 +56,3 @@ ssh -i "$KEY_PATH" \
     -o StrictHostKeyChecking=no \
     -o ProxyCommand="ssh -i $KEY_PATH -W %h:%p ubuntu@$BASTION_IP" \
     ubuntu@$TARGET_PRIVATE_IP "$@"
-
