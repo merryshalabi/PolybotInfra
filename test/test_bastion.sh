@@ -87,12 +87,12 @@ echo '✅ Test case IV was completed successfully!'
 
 echo -e "\n\n\n-----------------------------------------------------------------------------------------------------------------"
 echo "Running Test Case V: Connect to the polybot instance through the bastion instance and execute"
-echo "                      'curl YOLO_PRIVATE_IP:8080/health' command to talk to the YOLO instance (which should return a 200 status code)."
-echo "Command: bastion_connect.sh $PUBLIC_IP $POLYBOT_PRIVATE_IP curl $YOLO_PRIVATE_IP:8080/health"
+echo "                      'curl YOLO_PRIVATE_IP:8081/health' command to talk to the YOLO instance (which should return a 200 status code)."
+echo "Command: bastion_connect.sh $PUBLIC_IP $POLYBOT_PRIVATE_IP curl $YOLO_PRIVATE_IP:8081/health"
 echo -e "-----------------------------------------------------------------------------------------------------------------"
 
 export KEY_PATH=$(pwd)/private_key
-OUTPUT=$(bash bastion_connect.sh $PUBLIC_IP $POLYBOT_PRIVATE_IP curl --silent --output /dev/null --write-out '%{http_code}' $YOLO_PRIVATE_IP:8080/health)
+OUTPUT=$(bash bastion_connect.sh $PUBLIC_IP $POLYBOT_PRIVATE_IP curl --silent --output /dev/null --write-out '%{http_code}' $YOLO_PRIVATE_IP:8081/health)
 
 if [ $? -ne "0" ]
 then
