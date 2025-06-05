@@ -19,8 +19,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           source: |
-            nginx-config/polybot-prod.conf
-            scripts/deploy_nginx.sh
+            ./nginx-config/polybot-prod.conf
+            ./scripts/deploy_nginx.sh
           target: /home/ubuntu/
 
       - name: Prepare config and restore certs on EC2
