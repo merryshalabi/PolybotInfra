@@ -38,6 +38,6 @@ jobs:
     - name: Run deploy script on EC2
       run: |
         ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
-          chmod +x /home/ubuntu/deploy_nginx_container.sh
-          /home/ubuntu/deploy_nginx_container.sh
+          chmod +x /home/ubuntu/deploy_nginx.sh
+          /home/ubuntu/deploy_nginx.sh
         EOF
