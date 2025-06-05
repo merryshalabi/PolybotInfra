@@ -9,5 +9,5 @@ docker run -d \
   -p 443:443 \
   -p 8443:8443 \
   -v /home/ubuntu/conf.d:/etc/nginx/conf.d/ \
-  -v /home/ubuntu/certs:/etc/nginx/certs/ \
+  -v /etc/letsencrypt/live/merry-bot.fursa.click:/etc/nginx/certs/ \
   nginx
