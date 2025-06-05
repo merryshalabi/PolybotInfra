@@ -7,6 +7,7 @@ docker rm mynginx || true
 mkdir -p /home/ubuntu/conf.d
 mkdir -p /home/ubuntu/certs
 
+
 docker run -d \
   --name mynginx \
   -p 443:443 \
