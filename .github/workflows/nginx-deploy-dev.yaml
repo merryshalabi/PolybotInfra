@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "nginx-config/polybot-dev.conf"
-      - "scripts/deploy_nginx_container.sh"
+      - "scripts/deploy_nginx.sh"
     branches:
       - dev
 
