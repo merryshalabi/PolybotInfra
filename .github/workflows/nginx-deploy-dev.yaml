@@ -21,9 +21,12 @@ jobs:
         echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
         chmod 600 key.pem
 
-    - name: Ensure target directory exists on EC2
+    - name: Ensure target directories exist on EC2
       run: |
-        ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} "mkdir -p /home/ubuntu/conf.d"
+        ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          mkdir -p /home/ubuntu/conf.d
+          mkdir -p /home/ubuntu/certs
+        EOF
 
     - name: Copy Nginx config and deploy script to EC2
       run: |
@@ -34,6 +37,13 @@ jobs:
         scp -i key.pem -o StrictHostKeyChecking=no \
           scripts/deploy_nginx.sh \
           ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/
+
+    - name: Upload TLS certificates to EC2
+      run: |
+        ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << EOF
+          echo "${{ secrets.NGINX_CRT_B64 }}" | base64 -d > /home/ubuntu/certs/server.crt
+          echo "${{ secrets.NGINX_KEY_B64 }}" | base64 -d > /home/ubuntu/certs/server.key
+        EOF
 
     - name: Run deploy script on EC2
       run: |
