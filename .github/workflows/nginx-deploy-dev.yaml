@@ -21,6 +21,10 @@ jobs:
         echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
         chmod 600 key.pem
 
+    - name: Ensure target directory exists on EC2
+      run: |
+        ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} "mkdir -p /home/ubuntu/conf.d"
+
     - name: Copy Nginx config and deploy script to EC2
       run: |
         scp -i key.pem -o StrictHostKeyChecking=no \
