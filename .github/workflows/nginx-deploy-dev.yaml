@@ -12,8 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name:
-        Debug: Show workspace files
+      - name: Show workspace files
         run: |
           echo "Files in workspace:"
           ls -R
