@@ -1,38 +1,46 @@
-name: Deploy Prod Nginx
+name: Deploy Nginx Container to prod
 
 on:
   push:
+    paths:
+      - "nginx-config/polybot-prod.conf"
+      - "scripts/deploy_nginx.sh"
     branches:
       - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Copy config and deploy script to EC2
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: |
-            ./nginx-config/polybot-prod.conf
-            ./scripts/deploy_nginx.sh
-          target: /home/ubuntu/
+    - name: Set up SSH key
+      run: |
+        echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
+        chmod 600 key.pem
 
-      - name: Prepare config and restore certs on EC2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            mkdir -p /home/ubuntu/conf.d /home/ubuntu/certs
-            mv /home/ubuntu/polybot-prod.conf /home/ubuntu/conf.d/
-            echo "${{ secrets.NGINX_KEY_B64 }}" | base64 -d > /home/ubuntu/certs/server.key
-            echo "${{ secrets.NGINX_CRT_B64 }}" | base64 -d > /home/ubuntu/certs/server.crt
-            chmod +x /home/ubuntu/deploy_nginx.sh
-            /home/ubuntu/deploy_nginx.sh
+    - name: Ensure target directories exist on EC2
+      run: |
+        ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          mkdir -p /home/ubuntu/conf.d
+          mkdir -p /home/ubuntu/certs
+        EOF
+
+    - name: Copy Nginx config and deploy script to EC2
+      run: |
+        scp -i key.pem -o StrictHostKeyChecking=no \
+          nginx-config/polybot-prod.conf \
+          ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/conf.d/
+
+        scp -i key.pem -o StrictHostKeyChecking=no \
+          scripts/deploy_nginx.sh \
+          ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/
+
+    - name: Run deploy script on EC2
+      run: |
+        ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          chmod +x /home/ubuntu/deploy_nginx.sh
+          /home/ubuntu/deploy_nginx.sh
+        EOF
