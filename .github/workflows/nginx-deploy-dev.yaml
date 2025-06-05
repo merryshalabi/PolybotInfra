@@ -32,7 +32,7 @@ jobs:
           ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/conf.d/
 
         scp -i key.pem -o StrictHostKeyChecking=no \
-          scripts/deploy_nginx_container.sh \
+          scripts/deploy_nginx.sh \
           ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/
 
     - name: Run deploy script on EC2
