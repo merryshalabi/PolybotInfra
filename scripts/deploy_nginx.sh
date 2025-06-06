@@ -1,15 +1,15 @@
 #!/bin/bash
 set -e
 
-# Create network if it doesn't exist
+# Create shared Docker network if not exists
 docker network inspect nginx-proxy >/dev/null 2>&1 || \
   docker network create nginx-proxy
 
-# Stop and remove existing containers
+# Stop and remove old containers
 docker stop nginx-proxy nginx-proxy-letsencrypt || true
 docker rm nginx-proxy nginx-proxy-letsencrypt || true
 
-# Start the NGINX reverse proxy
+# Run nginx-proxy container
 docker run -d \
   --name nginx-proxy \
   --restart unless-stopped \
@@ -21,7 +21,7 @@ docker run -d \
   -v /var/run/docker.sock:/tmp/docker.sock:ro \
   jwilder/nginx-proxy
 
-# Start the Let's Encrypt companion container
+# Run Let's Encrypt companion
 docker run -d \
   --name nginx-proxy-letsencrypt \
   --restart unless-stopped \
