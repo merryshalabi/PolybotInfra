@@ -31,18 +31,19 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.REGION }}
 
-    - name: Terraform Init (to read backend state)
-      working-directory: tf
-      run: terraform init
+    - name: Download IP artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: control-plane-ip
+        path: .
 
-    - name: Get Control Plane IP from Terraform Output
+    - name: Read IP from file
       id: get-ip
-      working-directory: tf
       run: |
-        echo "Fetching control plane IP from Terraform output..."
-        CONTROL_PLANE_IP=$(terraform output -raw control_plane_public_ip)
+        CONTROL_PLANE_IP=$(cat control_plane_ip.txt)
         echo "CONTROL_PLANE_IP=$CONTROL_PLANE_IP"
         echo "CONTROL_PLANE_IP=$CONTROL_PLANE_IP" >> $GITHUB_ENV
+
 
     - name: Upload init script to control plane instance
       run: |
