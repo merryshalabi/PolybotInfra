@@ -1,0 +1,44 @@
+name: Init Kubernetes Control Plane
+
+on:
+  workflow_run:
+    workflows: ["Provision Kubernetes Cluster Infrastructure"]
+    types:
+      - completed
+
+jobs:
+  init-control-plane:
+    name: Initialize K8s Control Plane
+    runs-on: ubuntu-latest
+
+    env:
+      CONTROL_PLANE_TAG_NAME: merry-control-plane  # Change this if your instance tag is different
+      REGION: eu-west-2                             # Your AWS region
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.REGION }}
+
+    - name: Get Control Plane IP from Terraform
+      id: get-ip
+      working-directory: tf
+      run: |
+        IP=$(terraform output -raw control_plane_public_ip)
+        echo "CONTROL_PLANE_IP=$IP" >> "$GITHUB_OUTPUT"
+
+
+    - name: Upload init script to instance
+      run: |
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa scripts/init_control_plane.sh ubuntu@${{ steps.get-ip.outputs.CONTROL_PLANE_IP }}:/home/ubuntu/init_control_plane.sh
+
+    - name: SSH and run script
+      run: |
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${{ steps.get-ip.outputs.CONTROL_PLANE_IP }} \
+          'bash /home/ubuntu/init_control_plane.sh'
