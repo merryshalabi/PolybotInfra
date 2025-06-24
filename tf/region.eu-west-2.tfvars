@@ -1,0 +1,5 @@
+aws_region    = "eu-west-2"
+key_name      = "merryPolybotKey"
+instance_type = "t3.medium"
+ami_id        = "ami-051fd0ca694aa2379"
+availability_zones = ["eu-west-2a", "eu-west-2b"]

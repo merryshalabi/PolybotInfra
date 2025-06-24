@@ -1,0 +1,26 @@
+# Ignore Terraform state files
+*.tfstate
+*.tfstate.backup
+
+# Ignore Terraform crash logs
+crash.log
+
+# Ignore Terraform plan output
+*.tfplan
+
+# Ignore .terraform directories
+.terraform/
+
+# Ignore lock files (optional if you want reproducible builds)
+.terraform.lock.hcl
+
+# Ignore variable override files with secrets
+*.tfvars
+*.tfvars.json
+
+# Ignore VSCode/IDE specific files (optional)
+.vscode/
+.idea/
+
+# Ignore logs
+*.log
