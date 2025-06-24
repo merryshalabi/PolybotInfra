@@ -42,16 +42,16 @@ jobs:
       env:
         TF_IN_AUTOMATION: true
       run: |
-        IP=$(terraform output -raw control_plane_public_ip)
-        echo "CONTROL_PLANE_IP=$IP" >> "$GITHUB_OUTPUT"
-
-
+        echo "Fetching control plane IP from Terraform output..."
+        CONTROL_PLANE_IP=$(terraform output -raw control_plane_public_ip)
+        echo "CONTROL_PLANE_IP=$CONTROL_PLANE_IP"
+        echo "CONTROL_PLANE_IP=$CONTROL_PLANE_IP" >> $GITHUB_ENV
 
     - name: Upload init script to instance
       run: |
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa scripts/init_control_plane.sh ubuntu@${{ steps.get-ip.outputs.CONTROL_PLANE_IP }}:/home/ubuntu/init_control_plane.sh
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa scripts/init_control_plane.sh ubuntu@$CONTROL_PLANE_IP:/home/ubuntu/init_control_plane.sh
 
     - name: SSH and run script
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${{ steps.get-ip.outputs.CONTROL_PLANE_IP }} \
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$CONTROL_PLANE_IP \
           'bash /home/ubuntu/init_control_plane.sh'
