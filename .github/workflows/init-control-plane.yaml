@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      CONTROL_PLANE_TAG_NAME: merry-control-plane  # Change this if your instance tag is different
-      REGION: eu-west-2                             # Your AWS region
+      CONTROL_PLANE_TAG_NAME: merry-control-plane
+      REGION: eu-west-2
 
     steps:
     - name: Checkout code
@@ -39,9 +39,12 @@ jobs:
     - name: Get Control Plane IP from Terraform
       id: get-ip
       working-directory: tf
+      env:
+        TF_IN_AUTOMATION: true
       run: |
         IP=$(terraform output -raw control_plane_public_ip)
         echo "CONTROL_PLANE_IP=$IP" >> "$GITHUB_OUTPUT"
+
 
 
     - name: Upload init script to instance
