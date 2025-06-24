@@ -54,9 +54,16 @@ jobs:
           fi
         done
 
-    - name: Terraform Output
+    - name: Save Terraform Output to file
       working-directory: tf
-      run: terraform output control_plane_public_ip
+      run: |
+        terraform output -raw control_plane_public_ip > control_plane_ip.txt
+
+    - name: Upload IP as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: control-plane-ip
+        path: tf/control_plane_ip.txt
 
       
 
