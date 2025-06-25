@@ -12,12 +12,13 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      CONTROL_PLANE_TAG_NAME: merry-control-plane
+      CONTROL_PLANE_TAG_NAME: control-plane
       REGION: eu-west-2
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
