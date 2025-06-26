@@ -116,7 +116,6 @@ resource "aws_launch_template" "worker" {
   }
 }
 
-
 resource "aws_autoscaling_group" "worker_asg" {
   name                      = "k8s-worker-asg"
   max_size                  = var.max_size
