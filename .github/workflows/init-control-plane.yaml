@@ -65,6 +65,6 @@ jobs:
 
     - name: SSH into control plane and run script
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$CONTROL_PLANE_IP \
+        ssh -F /dev/null -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$CONTROL_PLANE_IP \
           'bash /home/ubuntu/init_control_plane.sh'
 
