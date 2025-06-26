@@ -121,7 +121,6 @@ resource "aws_autoscaling_group" "worker_asg" {
   max_size                  = var.max_size
   min_size                  = var.min_size
   desired_capacity          = var.desired_capacity
-  vpc_zone_identifier       = [var.subnet_id] # or a list of multiple subnet_ids
   health_check_type         = "EC2"
   force_delete              = true
 
