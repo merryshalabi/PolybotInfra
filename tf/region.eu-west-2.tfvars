@@ -1,5 +1,9 @@
-aws_region    = "eu-west-2"
-key_name      = "merryPolybotKey"
-instance_type = "t3.medium"
-ami_id        = "ami-051fd0ca694aa2379"
-availability_zones = ["eu-west-2a", "eu-west-2b"]
+aws_region          = "eu-west-2"
+key_name            = "merryPolybotKey"
+instance_type       = "t3.medium"
+ami_id              = "ami-051fd0ca694aa2379"
+availability_zones  = ["eu-west-2a", "eu-west-2b"]
+public_subnets = ["10.0.1.0/24"]
+desired_capacity    = 2
+min_size            = 1
+max_size            = 4

@@ -22,3 +22,25 @@ variable "ami_id" {
   description = "AMI ID for Ubuntu EC2"
   type        = string
 }
+variable "public_subnets" {
+  description = "List of public subnet IDs"
+  type        = list(string)
+}
+
+variable "desired_capacity" {
+  type        = number
+  description = "Desired number of worker nodes in ASG"
+  default     = 2
+}
+
+variable "min_size" {
+  type        = number
+  description = "Minimum number of worker nodes in ASG"
+  default     = 1
+}
+
+variable "max_size" {
+  type        = number
+  description = "Maximum number of worker nodes in ASG"
+  default     = 3
+}
