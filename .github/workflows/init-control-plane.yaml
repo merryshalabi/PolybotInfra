@@ -38,7 +38,6 @@ jobs:
         echo "✅ Found IP: $CONTROL_PLANE_IP"
         echo "CONTROL_PLANE_IP=$CONTROL_PLANE_IP" >> $GITHUB_ENV
 
-
     - name: Save private key to file
       run: |
         mkdir -p ~/.ssh
