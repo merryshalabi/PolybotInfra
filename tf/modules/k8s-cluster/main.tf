@@ -41,6 +41,28 @@ resource "aws_iam_role" "ssm_role" {
   })
 }
 
+resource "aws_iam_policy" "put_parameter_policy" {
+  name        = "AllowPutParameter"
+  description = "Allow EC2 to put kubeadm join command into SSM Parameter Store"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "ssm:PutParameter"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "put_parameter_attach" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = aws_iam_policy.put_parameter_policy.arn
+}
+
 resource "aws_iam_role_policy_attachment" "ssm_attach" {
   role       = aws_iam_role.ssm_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
@@ -66,3 +88,49 @@ resource "aws_instance" "control_plane" {
     Name = "control-plane"
   }
 }
+
+resource "aws_launch_template" "worker" {
+  name_prefix   = "k8s-worker"
+  image_id      = var.ami_id
+  instance_type = var.instance_type
+
+  iam_instance_profile {
+    name = aws_iam_instance_profile.ssm_instance_profile.name
+  }
+
+  user_data = base64encode(file("${path.module}/user_data_worker.sh"))
+
+  tag_specifications {
+    resource_type = "instance"
+
+    tags = {
+      Name = "k8s-worker"
+    }
+  }
+}
+
+resource "aws_autoscaling_group" "worker_asg" {
+  name                      = "k8s-worker-asg"
+  max_size                  = var.max_size
+  min_size                  = var.min_size
+  desired_capacity          = var.desired_capacity
+  vpc_zone_identifier       = [var.subnet_id] # or a list of multiple subnet_ids
+  health_check_type         = "EC2"
+  force_delete              = true
+
+  launch_template {
+    id      = aws_launch_template.worker.id
+    version = "$Latest"
+  }
+
+  tag {
+    key                 = "Name"
+    value               = "k8s-worker"
+    propagate_at_launch = true
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+

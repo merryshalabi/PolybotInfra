@@ -52,3 +52,4 @@ apt-mark hold kubelet kubeadm kubectl
 # Enable CRI-O and kubelet
 systemctl enable --now crio
 systemctl enable --now kubelet
+
