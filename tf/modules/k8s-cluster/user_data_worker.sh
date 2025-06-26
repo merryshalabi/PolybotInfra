@@ -40,18 +40,25 @@ swapoff -a
 # add the command to crontab to make it persistent across reboots
 (crontab -l ; echo "@reboot /sbin/swapoff -a") | crontab -
 
-sleep 20
+# Wait for the join command to be available in SSM
+MAX_RETRIES=30
+RETRY_DELAY=10
+for i in $(seq 1 $MAX_RETRIES); do
+  echo "Attempt $i to fetch join command from SSM..."
+  JOIN_COMMAND=$(aws ssm get-parameter \
+    --name "/k8s/worker-join-command" \
+    --region eu-west-2 \
+    --with-decryption \
+    --query "Parameter.Value" \
+    --output text) && break
+  echo "Join command not available yet. Retrying in $RETRY_DELAY seconds..."
+  sleep $RETRY_DELAY
+done
 
+if [ -z "$JOIN_COMMAND" ]; then
+  echo "❌ Failed to retrieve join command from SSM"
+  exit 1
+fi
 
-# Save kubeadm join command to AWS SSM
-echo "Saving worker join command to AWS SSM..."
-JOIN_COMMAND=$(kubeadm token create --print-join-command)
-
-aws ssm put-parameter \
-  --name "/k8s/worker-join-command" \
-  --type "String" \
-  --value "$JOIN_COMMAND" \
-  --region eu-west-2 \
-  --overwrite
-
-echo " Join command saved to SSM."
+# Join the cluster
+$JOIN_COMMAND
