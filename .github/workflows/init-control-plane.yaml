@@ -38,6 +38,20 @@ jobs:
         echo "✅ Found IP: $CONTROL_PLANE_IP"
         echo "CONTROL_PLANE_IP=$CONTROL_PLANE_IP" >> $GITHUB_ENV
 
+    - name: Wait for EC2 to be ready (SSH)
+      run: |
+        echo "Waiting for SSH to become available on $CONTROL_PLANE_IP ..."
+        for i in {1..15}; do
+          if ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$CONTROL_PLANE_IP 'echo "SSH is up!"'; then
+            echo "✅ SSH is ready"
+            break
+          else
+            echo "Waiting ($i)..."
+            sleep 10
+          fi
+        done
+
+
     - name: Save private key to file
       run: |
         mkdir -p ~/.ssh
