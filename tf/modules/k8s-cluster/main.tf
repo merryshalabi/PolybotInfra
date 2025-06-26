@@ -100,6 +100,12 @@ resource "aws_launch_template" "worker" {
 
   user_data = base64encode(file("${path.module}/user_data_worker.sh"))
 
+  network_interfaces {
+    associate_public_ip_address = true
+    subnet_id                   = var.subnet_id
+    security_groups             = [aws_security_group.control_plane_sg.id]
+  }
+
   tag_specifications {
     resource_type = "instance"
 
@@ -108,6 +114,7 @@ resource "aws_launch_template" "worker" {
     }
   }
 }
+
 
 resource "aws_autoscaling_group" "worker_asg" {
   name                      = "k8s-worker-asg"
