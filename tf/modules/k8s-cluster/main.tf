@@ -17,6 +17,14 @@ resource "aws_security_group" "control_plane_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  ingress {
+    description = "Allow worker nodes to reach control-plane (e.g. kubelet)"
+    from_port       = 10250
+    to_port         = 10250
+    protocol        = "tcp"
+    security_groups = [aws_security_group.worker_sg.id]
+  }
+
 
   egress {
     from_port   = 0
@@ -105,7 +113,10 @@ resource "aws_launch_template" "worker" {
   network_interfaces {
     associate_public_ip_address = true
     subnet_id                   = var.subnet_id
-    security_groups             = [aws_security_group.control_plane_sg.id]
+    security_groups = [
+        aws_security_group.control_plane_sg.id,
+        aws_security_group.worker_sg.id
+    ]
   }
 
   tag_specifications {
@@ -141,4 +152,43 @@ resource "aws_autoscaling_group" "worker_asg" {
     create_before_destroy = true
   }
 }
+
+resource "aws_security_group" "worker_sg" {
+  name        = "worker-sg"
+  description = "Allow traffic for K8s worker nodes"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    description = "Allow SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow control-plane to access kubelet"
+    from_port       = 10250
+    to_port         = 10250
+    protocol        = "tcp"
+    security_groups = [aws_security_group.control_plane_sg.id]
+  }
+
+  ingress {
+    description = "Allow NodePort range"
+    from_port   = 30000
+    to_port     = 32767
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Allow all outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 
