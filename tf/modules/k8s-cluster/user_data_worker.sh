@@ -42,11 +42,16 @@ swapoff -a
 
 sleep 20
 
-# Fetch the join command from AWS SSM Parameter Store
-JOIN_COMMAND=$(aws ssm get-parameter --name "/k8s/worker-join-command" --region eu-west-2 --with-decryption --query "Parameter.Value" --output text)
 
-# Only join if not already part of the cluster
-if [ ! -f /etc/kubernetes/kubelet.conf ]; then
-  echo "Running kubeadm join..."
-  $JOIN_COMMAND
-fi
+# Save kubeadm join command to AWS SSM
+echo "Saving worker join command to AWS SSM..."
+JOIN_COMMAND=$(kubeadm token create --print-join-command)
+
+aws ssm put-parameter \
+  --name "/k8s/worker-join-command" \
+  --type "String" \
+  --value "$JOIN_COMMAND" \
+  --region eu-west-2 \
+  --overwrite
+
+echo " Join command saved to SSM."
