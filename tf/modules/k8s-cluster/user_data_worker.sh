@@ -43,6 +43,8 @@ swapoff -a
 # add the command to crontab to make it persistent across reboots
 (crontab -l ; echo "@reboot /sbin/swapoff -a") | crontab -
 
+export PATH=$PATH:/usr/local/bin
+
 # Wait for the join command to be available in SSM
 MAX_RETRIES=30
 RETRY_DELAY=10
