@@ -50,7 +50,8 @@ resource "aws_iam_policy" "put_parameter_policy" {
       {
         Effect = "Allow",
         Action = [
-          "ssm:PutParameter"
+          "ssm:PutParameter",
+          "ec2:DescribeInstances"
         ],
         Resource = "*"
       }
