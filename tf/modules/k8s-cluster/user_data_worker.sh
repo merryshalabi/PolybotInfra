@@ -2,7 +2,7 @@
 exec > /var/log/user-data.log 2>&1
 set -e
 
-# Kubernetes version (must be valid!)
+# Kubernetes version
 KUBERNETES_VERSION=v1.32
 
 # System updates and tools
@@ -32,9 +32,9 @@ sudo apt-get update
 sudo apt-get install -y cri-o kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 
-# Enable and start services
+# Enable CRI-O only for now; delay kubelet start until after join
 sudo systemctl enable --now crio
-sudo systemctl enable --now kubelet
+sudo systemctl enable kubelet  # do not start it yet
 
 # Disable swap
 sudo swapoff -a
@@ -42,7 +42,7 @@ grep -q '/sbin/swapoff -a' <(crontab -l 2>/dev/null) || (crontab -l 2>/dev/null;
 
 export PATH=$PATH:/usr/local/bin
 
-# Wait for the join command to be available in SSM
+# Wait for join command in SSM
 MAX_RETRIES=30
 RETRY_DELAY=10
 for i in $(seq 1 $MAX_RETRIES); do
@@ -64,3 +64,6 @@ fi
 
 # Join the cluster
 eval "$JOIN_COMMAND" && echo "✅ Worker successfully joined the cluster."
+
+# Now kubelet has config, safe to start it
+sudo systemctl restart kubelet
