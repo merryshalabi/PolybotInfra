@@ -1,5 +1,5 @@
 #!/bin/bash
-exec > /var/log/user-data.log 2>&1
+exec 1>>/tmp/user-data-debug.log 2>&1
 set -e
 
 KUBERNETES_VERSION="v1.32"
