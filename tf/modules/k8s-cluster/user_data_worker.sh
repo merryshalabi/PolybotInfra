@@ -1,3 +1,4 @@
+#!/bin/bash
 # These instructions are for Kubernetes v1.32.
 KUBERNETES_VERSION=v1.32
 
@@ -21,11 +22,24 @@ EOF
 sudo sysctl --system
 
 # Install cri-o kubelet kubeadm kubectl
-curl -fsSL https://pkgs.k8s.io/core:/stable:/$KUBERNETES_VERSION/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/$KUBERNETES_VERSION/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+# Remove existing keyrings to avoid prompt
+sudo rm -f /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+sudo rm -f /etc/apt/keyrings/cri-o-apt-keyring.gpg
 
-curl -fsSL https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
-echo "deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/ /" | sudo tee /etc/apt/sources.list.d/cri-o.list
+# Add Kubernetes keyring and repo
+curl -fsSL https://pkgs.k8s.io/core:/stable:/$KUBERNETES_VERSION/deb/Release.key | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/$KUBERNETES_VERSION/deb/ /" | \
+  sudo tee /etc/apt/sources.list.d/kubernetes.list > /dev/null
+
+# Add CRI-O keyring and repo
+curl -fsSL https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/Release.key | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
+
+echo "deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/ /" | \
+  sudo tee /etc/apt/sources.list.d/cri-o.list > /dev/null
+
 
 sudo apt-get update
 sudo apt-get install -y software-properties-common apt-transport-https ca-certificates curl gpg
@@ -50,7 +64,7 @@ MAX_RETRIES=30
 RETRY_DELAY=10
 for i in $(seq 1 $MAX_RETRIES); do
   echo "Attempt $i to fetch join command from SSM..."
-  JOIN_COMMAND=$(aws ssm get-parameter \
+  JOIN_COMMAND=$(/usr/local/bin/aws ssm get-parameter \
     --name "/k8s/worker-join-command" \
     --region eu-west-2 \
     --with-decryption \
