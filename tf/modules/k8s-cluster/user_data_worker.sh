@@ -40,7 +40,6 @@ sudo systemctl enable --now kubelet
 sudo swapoff -a
 (crontab -l ; echo "@reboot /sbin/swapoff -a") | crontab -
 
-
 # ✅ Enable and start services
 echo "🔌 Starting services..."
 sudo systemctl daemon-reexec
