@@ -39,3 +39,4 @@ sudo systemctl enable --now kubelet
 # Disable swap
 sudo swapoff -a
 (crontab -l ; echo "@reboot /sbin/swapoff -a") | crontab -
+
