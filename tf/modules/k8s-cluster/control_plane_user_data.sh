@@ -49,6 +49,5 @@ sudo systemctl enable --now kubelet
 
 # Disable swap (required for kubeadm)
 sudo swapoff -a
-
 # Persist swapoff on reboot
 grep -q '/sbin/swapoff -a' <(crontab -l 2>/dev/null) || (crontab -l 2>/dev/null; echo "@reboot /sbin/swapoff -a") | crontab -
