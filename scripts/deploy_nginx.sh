@@ -31,8 +31,3 @@ docker run -d \
   --restart unless-stopped \
   -p 443:443 \
   -p 8443:8443 \
-  -v /home/ubuntu/conf.d:/etc/nginx/conf.d/ \
-  -v "$CERT_DIR":/etc/nginx/certs/ \
-  nginx
-
-echo "✅ NGINX deployed with updated SSL certs"
