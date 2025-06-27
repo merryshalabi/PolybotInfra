@@ -38,7 +38,7 @@ sudo systemctl enable --now kubelet
 
 # Disable swap
 sudo swapoff -a
-(crontab -l ; echo "@reboot /sbin/swapoff -a") | crontab -
+grep -q '/sbin/swapoff -a' <(crontab -l 2>/dev/null) || (crontab -l 2>/dev/null; echo "@reboot /sbin/swapoff -a") | crontab -
 
 export PATH=$PATH:/usr/local/bin
 
@@ -47,12 +47,12 @@ MAX_RETRIES=30
 RETRY_DELAY=10
 for i in $(seq 1 $MAX_RETRIES); do
   echo "Attempt $i to fetch join command from SSM..."
-  JOIN_COMMAND=$(/usr/local/bin/aws ssm get-parameter \
+  JOIN_COMMAND="$(/usr/local/bin/aws ssm get-parameter \
     --name "/k8s/worker-join-command" \
     --region eu-west-2 \
     --with-decryption \
     --query "Parameter.Value" \
-    --output text) && break
+    --output text)" && break
   echo "Join command not available yet. Retrying in $RETRY_DELAY seconds..."
   sleep $RETRY_DELAY
 done
@@ -63,5 +63,4 @@ if [ -z "$JOIN_COMMAND" ]; then
 fi
 
 # Join the cluster
-eval "$JOIN_COMMAND"
-
+eval "$JOIN_COMMAND" && echo "✅ Worker successfully joined the cluster."
