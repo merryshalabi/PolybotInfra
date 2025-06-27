@@ -63,4 +63,5 @@ if [ -z "$JOIN_COMMAND" ]; then
 fi
 
 # Join the cluster
-$JOIN_COMMAND
+eval "$JOIN_COMMAND"
+
