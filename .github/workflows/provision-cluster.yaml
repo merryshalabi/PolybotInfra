@@ -1,9 +1,5 @@
   name: Provision Kubernetes Cluster Infrastructure
 
-  permissions:
-    actions: read
-    contents: read
-
   on:
     push:
       branches:
@@ -16,8 +12,6 @@
       steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          persist-credentials: true
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -42,22 +36,6 @@
       - name: Terraform Apply
         working-directory: tf
         run: terraform apply -var-file=region.eu-west-2.tfvars -auto-approve
-
-      - name:  Save control plane IP as artifact
-        working-directory: tf
-        run: |
-          echo "$(terraform output -raw control_plane_public_ip)" > control-plane-ip.txt
-
-      - name:  Upload IP
-        uses: actions/upload-artifact@v4
-        with:
-          name: control-plane-ip
-          path: control-plane-ip.txt
-
-      - name:  Verify IP saved
-        run: cat control-plane-ip.txt
-
-
 
 
   
