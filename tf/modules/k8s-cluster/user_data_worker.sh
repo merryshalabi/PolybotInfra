@@ -71,5 +71,21 @@ if [ -z "$JOIN_COMMAND" ]; then
 fi
 
 echo "🤝 Running kubeadm join..."
-eval "$JOIN_COMMAND"
-echo "✅ Worker successfully joined the cluster."
+JOIN_SUCCESS=false
+for attempt in $(seq 1 10); do
+  echo "🔁 Attempt $attempt to join the cluster..."
+  if eval "$JOIN_COMMAND"; then
+    echo "✅ Worker successfully joined the cluster."
+    JOIN_SUCCESS=true
+    break
+  else
+    echo "❌ kubeadm join failed. Retrying in 15 seconds..."
+    sleep 15
+  fi
+done
+
+if [ "$JOIN_SUCCESS" = false ]; then
+  echo "❌ kubeadm join failed after multiple attempts"
+  exit 1
+fi
+
