@@ -49,6 +49,9 @@ echo "🔑 Fetching kubeadm join command from SSM..."
 MAX_RETRIES=30
 RETRY_DELAY=10
 
+REGION="eu-west-2"
+SSM_PARAM_NAME="/k8s/worker-join-command"
+
 for i in $(seq 1 $MAX_RETRIES); do
   echo "Attempt $i to fetch join command..."
   JOIN_COMMAND=$(aws ssm get-parameter \
