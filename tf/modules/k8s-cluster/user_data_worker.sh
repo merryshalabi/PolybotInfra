@@ -70,6 +70,20 @@ if [ -z "$JOIN_COMMAND" ]; then
   exit 1
 fi
 
+# Wait until the control plane API server is reachable
+CONTROL_PLANE_IP=$(echo "$JOIN_COMMAND" | grep -oP '(?<=@)\d+\.\d+\.\d+\.\d+')
+
+echo "⏳ Waiting for control plane API server to be reachable at $CONTROL_PLANE_IP:6443 ..."
+for i in $(seq 1 30); do
+  if nc -z $CONTROL_PLANE_IP 6443; then
+    echo "✅ Control plane is reachable!"
+    break
+  else
+    echo "🔁 Control plane not ready yet... waiting ($i/30)"
+    sleep 10
+  fi
+done
+
 echo "🤝 Running kubeadm join..."
 JOIN_SUCCESS=false
 for attempt in $(seq 1 10); do
