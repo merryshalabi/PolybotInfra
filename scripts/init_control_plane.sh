@@ -32,7 +32,6 @@ for i in {1..30}; do
   fi
 done
 
-
 # Retry loop to wait for the join command
 echo "🔑 Generating fresh kubeadm join command..."
 JOIN_COMMAND=$(kubeadm token create --print-join-command)
