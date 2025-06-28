@@ -5,7 +5,6 @@ set -e
 # Kubernetes version
 KUBERNETES_VERSION=v1.32
 
-
 # Install required tools
 sudo apt-get update
 sudo apt-get install -y jq unzip ebtables ethtool software-properties-common apt-transport-https ca-certificates curl gpg
