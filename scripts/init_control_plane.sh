@@ -6,7 +6,7 @@ echo "📦 Starting control-plane initialization..."
 # Only initialize if not already done
 if [ ! -f /etc/kubernetes/admin.conf ]; then
   echo "🔧 Initializing Kubernetes cluster..."
-  sudo kubeadm init --pod-network-cidr=192.168.0.0/16 | tee /tmp/kubeadm-init.log
+  sudo /usr/bin/kubeadm init --pod-network-cidr=192.168.0.0/16 | tee /tmp/kubeadm-init.log
 fi
 
 # Configure kubectl for current user (assumes running as ubuntu or ec2-user)
