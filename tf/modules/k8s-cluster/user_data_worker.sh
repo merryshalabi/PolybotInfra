@@ -70,7 +70,7 @@ if [ -z "$JOIN_COMMAND" ]; then
 fi
 
 # Wait until the control plane API server is reachable
-CONTROL_PLANE_IP=$(echo "$JOIN_COMMAND" | grep -oP '(?<=@)\d+\.\d+\.\d+\.\d+')
+CONTROL_PLANE_IP=$(echo "$JOIN_COMMAND" | awk '{print $3}' | cut -d: -f1)
 
 echo "⏳ Waiting for control plane API server to be reachable at $CONTROL_PLANE_IP:6443 ..."
 for i in $(seq 1 30); do
