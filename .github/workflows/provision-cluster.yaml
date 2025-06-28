@@ -37,6 +37,17 @@
         working-directory: tf
         run: terraform apply -var-file=region.eu-west-2.tfvars -auto-approve
 
+      - name: 📝 Save control plane IP as artifact
+        run: |
+          echo "$(terraform output -raw control_plane_public_ip)" > control-plane-ip.txt
+
+      - name: 📦 Upload IP
+        uses: actions/upload-artifact@v4
+        with:
+          name: control-plane-ip
+          path: control-plane-ip.txt
+
+
 
   
   
