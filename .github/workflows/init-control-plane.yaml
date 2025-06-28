@@ -43,19 +43,18 @@ jobs:
         echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
 
-    - name: Wait for EC2 to be ready (SSH)
+    - name: Wait until Kubernetes is ready on control plane
       run: |
-        echo "Waiting for SSH to become available on $CONTROL_PLANE_IP ..."
-        for i in {1..15}; do
-          if ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$CONTROL_PLANE_IP 'echo "SSH is up!"'; then
-            echo "✅ SSH is ready"
+        echo "⏳ Waiting for Kubernetes to finish installing..."
+        for i in {1..30}; do
+          if ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${{ env.CONTROL_PLANE_IP }} 'test -f /etc/kubernetes/admin.conf'; then
+            echo "✅ Kubernetes is ready"
             break
           else
-            echo "Waiting ($i)..."
+            echo "Still waiting for kubeadm... ($i)"
             sleep 10
           fi
         done
-
 
 
     - name: Upload init script to control plane instance
