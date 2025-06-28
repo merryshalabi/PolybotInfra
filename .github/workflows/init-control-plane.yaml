@@ -27,6 +27,8 @@ jobs:
     - name: Load control plane IP
       run: |
         echo "CONTROL_PLANE_IP=$(cat control-plane-ip.txt)" >> $GITHUB_ENV
+      
+
 
     - name: Save private key to file
       run: |
