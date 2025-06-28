@@ -34,29 +34,14 @@ done
 
 
 # Retry loop to wait for the join command
-MAX_RETRIES=30
-RETRY_DELAY=10
-for i in $(seq 1 $MAX_RETRIES); do
-  echo "Attempt $i to fetch join command from SSM..."
-  JOIN_COMMAND=$(aws ssm get-parameter \
-    --name "/k8s/worker-join-command" \
-    --region eu-west-2 \
-    --with-decryption \
-    --query "Parameter.Value" \
-    --output text) && break
+echo "🔑 Generating fresh kubeadm join command..."
+JOIN_COMMAND=$(kubeadm token create --print-join-command)
 
-  echo "Join command not available yet. Retrying in $RETRY_DELAY seconds..."
-  sleep $RETRY_DELAY
-done
-
-if [ -z "$JOIN_COMMAND" ]; then
-  echo "❌ Failed to retrieve join command from SSM after $MAX_RETRIES attempts"
-  exit 1
-fi
-
-# Only join if not already joined
-if [ ! -f /etc/kubernetes/kubelet.conf ]; then
-  echo "Running kubeadm join..."
-  $JOIN_COMMAND
-fi
+echo "🔐 Storing join command in SSM..."
+aws ssm put-parameter \
+  --name "/k8s/worker-join-command" \
+  --value "$JOIN_COMMAND" \
+  --type "SecureString" \
+  --overwrite \
+  --region eu-west-2
 
