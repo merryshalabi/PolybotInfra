@@ -33,7 +33,9 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ env.CONTROL_PLANE_IP }} >> ~/.ssh/known_hosts
 
-      - name: Refresh join token on Control Plane
+      - name: Copy refresh-join-token.sh to Control Plane
         run: |
-          ssh ubuntu@${{ env.CONTROL_PLANE_IP }} "/usr/local/bin/refresh-join-token.sh ${{ env.CONTROL_PLANE_IP }}"
+          scp -o StrictHostKeyChecking=no scripts/refresh-join-token.sh ubuntu@${{ env.CONTROL_PLANE_IP }}:/tmp/
+          ssh ubuntu@${{ env.CONTROL_PLANE_IP }} "chmod +x /tmp/refresh-join-token.sh && sudo mv /tmp/refresh-join-token.sh /usr/local/bin/"
+
 
