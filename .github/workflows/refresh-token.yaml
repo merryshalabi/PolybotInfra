@@ -35,5 +35,5 @@ jobs:
 
       - name: Refresh join token on Control Plane
         run: |
-          ssh ubuntu@${{ env.CONTROL_PLANE_IP }} "sudo /usr/local/bin/refresh-join-token.sh ${{ env.CONTROL_PLANE_IP }}"
+          ssh ubuntu@${{ env.CONTROL_PLANE_IP }} "/usr/local/bin/refresh-join-token.sh ${{ env.CONTROL_PLANE_IP }}"
 
