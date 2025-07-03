@@ -6,11 +6,11 @@ SSM_PARAM_NAME="/k8s/worker-join-command"
 
 CONTROL_PLANE_IP="$1"
 
-JOIN_CMD=$(kubeadm token create --ttl 24h --print-join-command --control-plane-endpoint "$CONTROL_PLANE_IP:6443")
+JOIN_COMMAND=$(kubeadm token create --print-join-command)
 
 aws ssm put-parameter \
   --name "$SSM_PARAM_NAME" \
+  --value "$JOIN_COMMAND" \
   --type "SecureString" \
-  --value "$JOIN_CMD" \
   --overwrite \
-  --region "$REGION"
+  --region eu-west-2
