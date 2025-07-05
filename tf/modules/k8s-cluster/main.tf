@@ -260,7 +260,7 @@ resource "aws_lb_target_group" "nginx_nodeport_tg" {
 
 resource "aws_autoscaling_attachment" "nginx_asg_lb_attachment" {
   autoscaling_group_name = aws_autoscaling_group.worker_asg.name
-  alb_target_group_arn   = aws_lb_target_group.nginx_nodeport_tg.arn
+  lb_target_group_arn   = aws_lb_target_group.nginx_nodeport_tg.arn
 }
 
 
