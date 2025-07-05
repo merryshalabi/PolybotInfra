@@ -7,5 +7,7 @@ public_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
 desired_capacity    = 2
 min_size            = 0
 max_size            = 4
-acm_cert_arn = "arn:aws:acm:eu-west-2:123456789012:certificate/c88b1bdf-2648-4508-bbc1-12115d868ede"
+acm_cert_arn        = "arn:aws:acm:eu-west-2:228281126655:certificate/c88b1bdf-2648-4508-bbc1-12115d868ede"
+
+
 
