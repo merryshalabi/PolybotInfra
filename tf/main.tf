@@ -49,6 +49,8 @@ module "k8s_cluster" {
   desired_capacity  = var.desired_capacity
   min_size          = var.min_size
   max_size          = var.max_size
+  acm_cert_arn     = var.acm_cert_arn
+
 }
 
 
