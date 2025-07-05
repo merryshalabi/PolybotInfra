@@ -226,41 +226,43 @@ resource "aws_security_group" "lb_sg" {
   }
 }
 
-resource "aws_lb_listener" "https" {
+resource "aws_lb_listener" "https_listener" {
   load_balancer_arn = aws_lb.k8s_lb.arn
   port              = 443
   protocol          = "HTTPS"
-
   ssl_policy        = "ELBSecurityPolicy-2016-08"
   certificate_arn   = var.acm_cert_arn
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.k8s_workers.arn
+    target_group_arn = aws_lb_target_group.nginx_nodeport_tg.arn
   }
 }
 
-resource "aws_lb_target_group" "k8s_workers" {
-  name        = "k8s-workers-tg"
-  port        = 80
+
+resource "aws_lb_target_group" "nginx_nodeport_tg" {
+  name        = "nginx-nodeport-tg"
+  port        = 31981
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
   target_type = "instance"
 
   health_check {
-    path                = "/"
+    path                = "/healthz"
+    matcher             = "200-399"
     interval            = 30
     timeout             = 5
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
-    matcher             = "200-399"
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
   }
 }
 
-resource "aws_autoscaling_attachment" "asg_attachment" {
+
+resource "aws_autoscaling_attachment" "nginx_asg_lb_attachment" {
   autoscaling_group_name = aws_autoscaling_group.worker_asg.name
-  alb_target_group_arn   = aws_lb_target_group.k8s_workers.arn
+  alb_target_group_arn   = aws_lb_target_group.nginx_nodeport_tg.arn
 }
+
 
 
 
