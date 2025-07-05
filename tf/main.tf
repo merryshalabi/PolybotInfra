@@ -27,8 +27,8 @@ module "network" {
   name = "k8s-main-vpc"
   cidr = "10.0.0.0/16"
 
-  azs            = [var.availability_zones[0]]
-  public_subnets = ["10.0.1.0/24"]
+  azs            = var.availability_zones
+  public_subnets = var.public_subnets
 
   enable_nat_gateway   = false
   enable_dns_support   = true
@@ -42,7 +42,7 @@ module "network" {
 module "k8s_cluster" {
   source            = "./modules/k8s-cluster"
   vpc_id            = module.network.vpc_id
-  subnet_id         = module.network.public_subnets[0]
+  subnet_ids        = module.network.public_subnets
   key_name          = var.key_name
   instance_type     = var.instance_type
   ami_id            = var.ami_id

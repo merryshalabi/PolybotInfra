@@ -86,7 +86,7 @@ resource "aws_iam_instance_profile" "ssm_instance_profile" {
 resource "aws_instance" "control_plane" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
-  subnet_id              = var.subnet_id
+  subnet_id            = var.subnet_ids[0]
   vpc_security_group_ids = [aws_security_group.control_plane_sg.id]
   key_name               = var.key_name
   associate_public_ip_address = true
@@ -111,14 +111,14 @@ resource "aws_launch_template" "worker" {
 
   user_data = base64encode(file("${path.module}/user_data_worker.sh"))
 
-  network_interfaces {
-    associate_public_ip_address = true
-    subnet_id                   = var.subnet_id
-    security_groups = [
+    network_interfaces {
+      associate_public_ip_address = true
+      security_groups = [
         aws_security_group.control_plane_sg.id,
         aws_security_group.worker_sg.id
-    ]
-  }
+      ]
+    }
+
 
   tag_specifications {
     resource_type = "instance"
@@ -152,6 +152,8 @@ resource "aws_autoscaling_group" "worker_asg" {
   lifecycle {
     create_before_destroy = true
   }
+  vpc_zone_identifier = var.subnet_ids
+
 }
 
 resource "aws_security_group" "worker_sg" {
