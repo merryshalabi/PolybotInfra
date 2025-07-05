@@ -270,6 +270,60 @@ resource "aws_autoscaling_attachment" "nginx_asg_lb_attachment" {
   lb_target_group_arn   = aws_lb_target_group.nginx_nodeport_tg.arn
 }
 
+resource "kubernetes_network_policy" "argocd_allow_egress" {
+  metadata {
+    name      = "allow-argocd-egress"
+    namespace = "argocd"
+  }
+
+  spec {
+    pod_selector {} # Applies to all pods in ArgoCD namespace
+
+    policy_types = ["Egress"]
+
+    egress {
+      ports {
+        port     = 53
+        protocol = "UDP"
+      }
+      to {
+        ip_block {
+          cidr = "0.0.0.0/0"
+        }
+      }
+    }
+
+    egress {
+      ports {
+        port     = 443
+        protocol = "TCP"
+      }
+      to {
+        ip_block {
+          cidr = "0.0.0.0/0"
+        }
+      }
+    }
+  }
+}
+resource "kubernetes_network_policy" "argocd_allow_internal" {
+  metadata {
+    name      = "allow-argocd-internal"
+    namespace = "argocd"
+  }
+
+  spec {
+    pod_selector {}
+
+    policy_types = ["Ingress"]
+
+    ingress {
+      from {
+        pod_selector {}
+      }
+    }
+  }
+}
 
 
 
