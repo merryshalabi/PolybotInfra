@@ -3,10 +3,11 @@ variable "vpc_id" {
   description = "VPC ID for the instance"
 }
 
-variable "subnet_id" {
-  type        = string
-  description = "Subnet ID for the instance"
+variable "subnet_ids" {
+  type        = list(string)
+  description = "List of Subnet IDs for control plane and ASG"
 }
+
 
 variable "key_name" {
   type        = string

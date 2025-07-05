@@ -40,3 +40,8 @@ jobs:
         run: |
           scp -o StrictHostKeyChecking=no scripts/refresh-join-token.sh ubuntu@${{ env.CONTROL_PLANE_IP }}:/tmp/
           ssh ubuntu@${{ env.CONTROL_PLANE_IP }} "chmod +x /tmp/refresh-join-token.sh && sudo mv /tmp/refresh-join-token.sh /usr/local/bin/"
+          
+      - name: 🔄 Run Refresh Join Script on Control Plane
+        run: |
+           ssh ubuntu@${{ env.CONTROL_PLANE_IP }} "sudo /usr/local/bin/refresh-join-token.sh"
+
