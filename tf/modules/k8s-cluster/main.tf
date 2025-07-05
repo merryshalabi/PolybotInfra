@@ -19,6 +19,13 @@ resource "aws_security_group" "control_plane_sg" {
   }
 
   ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
     description = "Allow worker nodes to reach control-plane (e.g. kubelet)"
     from_port       = 10250
     to_port         = 10250
