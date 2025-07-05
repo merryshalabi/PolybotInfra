@@ -40,4 +40,8 @@ variable "max_size" {
   type        = number
   description = "Maximum number of worker nodes in ASG"
   default     = 3
+}\
+variable "acm_cert_arn" {
+  description = "ARN of the ACM certificate for the HTTPS listener"
+  type        = string
 }
