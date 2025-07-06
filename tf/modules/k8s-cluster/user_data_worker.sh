@@ -43,6 +43,7 @@ sudo systemctl enable --now kubelet
 sudo swapoff -a
 (crontab -l ; echo "@reboot /sbin/swapoff -a") | crontab -
 
+
 # Wait for join command from SSM
 echo "🔑 Fetching kubeadm join command from SSM..."
 MAX_RETRIES=30
@@ -69,6 +70,9 @@ if [ -z "$JOIN_COMMAND" ]; then
   exit 1
 fi
 
+# Mount BPF filesystem (required for Calico eBPF dataplane)
+sudo mount bpffs -t bpf /sys/fs/bpf || echo "bpffs already mounted"
+echo "bpffs /sys/fs/bpf bpf defaults 0 0" | sudo tee -a /etc/fstab
 # Wait until the control plane API server is reachable
 CONTROL_PLANE_IP=$(echo "$JOIN_COMMAND" | awk '{print $3}' | cut -d: -f1)
 
