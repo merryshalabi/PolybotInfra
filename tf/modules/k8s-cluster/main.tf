@@ -186,8 +186,8 @@ resource "aws_security_group" "worker_sg" {
 
   ingress {
     description = "Allow NodePort range"
-    from_port   = 30000
-    to_port     = 32767
+    from_port   = 31981
+    to_port     = 31981
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -269,7 +269,5 @@ resource "aws_autoscaling_attachment" "nginx_asg_lb_attachment" {
   autoscaling_group_name = aws_autoscaling_group.worker_asg.name
   lb_target_group_arn   = aws_lb_target_group.nginx_nodeport_tg.arn
 }
-
-
 
 
