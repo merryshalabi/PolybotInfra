@@ -201,7 +201,13 @@ resource "aws_security_group" "worker_sg" {
     cidr_blocks = ["10.0.0.0/16"]
   }
 
-
+  ingress {
+    description     = "Allow LB to access Ingress NodePort (31672)"
+    from_port       = 31672
+    to_port         = 31672
+    protocol        = "tcp"
+    security_groups = [aws_security_group.lb_sg.id]
+  }
 
   ingress {
     description = "Allow NodePort range"
