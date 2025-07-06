@@ -26,6 +26,15 @@ resource "aws_security_group" "control_plane_sg" {
   }
 
   ingress {
+    description = "Allow BGP (Calico) from VPC"
+    from_port   = 179
+    to_port     = 179
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+
+  ingress {
     description = "Allow worker nodes to reach control-plane (e.g. kubelet)"
     from_port       = 10250
     to_port         = 10250
@@ -183,6 +192,16 @@ resource "aws_security_group" "worker_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.control_plane_sg.id]
   }
+
+  ingress {
+    description = "Allow BGP (Calico) from VPC"
+    from_port   = 179
+    to_port     = 179
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+
 
   ingress {
     description = "Allow NodePort range"
