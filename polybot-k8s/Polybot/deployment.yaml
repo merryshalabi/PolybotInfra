@@ -2,7 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: polybot
-  namespace: dev
+  labels:
+    app: polybot
 spec:
   replicas: 1
   selector:
@@ -14,7 +15,40 @@ spec:
         app: polybot
     spec:
       containers:
-      - name: polybot
-        image: merryshalabi/polybot:latest
-        ports:
-        - containerPort: 5000
+        - name: polybot
+          image: merryshalabi/polybot:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: YOLO_SERVER_URL
+              value: http://yolo:8000
+            - name: BOT_APP_URL
+              value: http://polybot:8000
+            - name: S3_BUCKET_NAME
+              value: your-s3-bucket-name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-polybot
+spec:
+  selector:
+    app: polybot
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-polybot-external
+spec:
+  type: NodePort
+  selector:
+    app: polybot
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+      nodePort: 30011
