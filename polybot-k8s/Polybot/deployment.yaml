@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: polybot
-          image: docker.io/merryshalabi/polybot-dev:latest
+          image: merryshalabi/polybot-dev:70
           ports:
             - containerPort: 8000
           envFrom:
