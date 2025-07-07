@@ -22,7 +22,6 @@ spec:
           envFrom:
             - secretRef:
                 name: polybot-env
-
 ---
 apiVersion: v1
 kind: Service
