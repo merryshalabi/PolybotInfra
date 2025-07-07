@@ -1,4 +1,0 @@
-namespace: polybot-dev
-resources:
-  - deployment.yaml
-  - ingress.yaml
