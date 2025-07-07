@@ -33,6 +33,13 @@ resource "aws_security_group" "control_plane_sg" {
     cidr_blocks = ["10.0.0.0/16"]
   }
 
+  ingress {
+    description = "Allow all traffic from VPC (pods, DNS, etc)"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
 
   ingress {
     description = "Allow worker nodes to reach control-plane (e.g. kubelet)"
@@ -211,11 +218,21 @@ resource "aws_security_group" "worker_sg" {
 
   ingress {
     description = "Allow NodePort range"
-    from_port   = 31981
-    to_port     = 31981
+    from_port   = 31672
+    to_port     = 31672
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  ingress {
+    description = "Allow all traffic from within VPC"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+
 
   egress {
     description = "Allow all outbound traffic"
