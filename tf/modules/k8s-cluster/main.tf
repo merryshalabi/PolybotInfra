@@ -224,6 +224,15 @@ resource "aws_security_group" "worker_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  ingress {
+    description = "Allow all traffic between worker nodes"
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    security_groups = [aws_security_group.worker_sg.id]
+  }
+
 }
 
 resource "aws_lb" "k8s_lb" {
