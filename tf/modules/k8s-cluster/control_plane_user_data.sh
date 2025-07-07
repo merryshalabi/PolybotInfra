@@ -40,6 +40,4 @@ sudo systemctl enable --now kubelet
 sudo swapoff -a
 (crontab -l ; echo "@reboot /sbin/swapoff -a") | crontab -
 
-sudo mount bpffs -t bpf /sys/fs/bpf || echo "bpffs already mounted"
-echo "bpffs /sys/fs/bpf bpf defaults 0 0" | sudo tee -a /etc/fstab
 
