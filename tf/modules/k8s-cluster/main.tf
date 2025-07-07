@@ -218,10 +218,11 @@ resource "aws_security_group" "worker_sg" {
 
   ingress {
     description = "Allow NodePort range"
-    from_port   = 31672
-    to_port     = 31672
+    from_port   = 31981
+    to_port     = 31981
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+
   }
 
   ingress {
