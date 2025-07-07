@@ -49,3 +49,7 @@ spec:
       port: 8000
       targetPort: 8000
       nodePort: 30011
+---
+resources:
+  - deployment.yaml
+  - ingress.yaml
