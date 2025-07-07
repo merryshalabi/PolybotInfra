@@ -225,14 +225,6 @@ resource "aws_security_group" "worker_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    description = "Allow all traffic between worker nodes"
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    security_groups = [aws_security_group.worker_sg.id]
-  }
-
 }
 
 resource "aws_lb" "k8s_lb" {
@@ -265,6 +257,16 @@ resource "aws_security_group" "lb_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+resource "aws_security_group_rule" "allow_worker_to_worker_all" {
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  security_group_id = aws_security_group.worker_sg.id
+  source_security_group_id = aws_security_group.worker_sg.id
+  description       = "Allow all traffic between worker nodes"
 }
 
 resource "aws_lb_listener" "https_listener" {
