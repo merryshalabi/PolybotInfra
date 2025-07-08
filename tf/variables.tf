@@ -48,3 +48,7 @@ variable "acm_cert_arn" {
   description = "ARN of the ACM certificate for the HTTPS listener"
   type        = string
 }
+variable "s3_bucket_name" {
+  description = "S3 bucket name used for uploading images from the bot"
+  type        = string
+}

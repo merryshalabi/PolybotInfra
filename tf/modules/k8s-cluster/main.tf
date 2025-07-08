@@ -324,4 +324,25 @@ resource "aws_autoscaling_attachment" "nginx_asg_lb_attachment" {
   lb_target_group_arn   = aws_lb_target_group.nginx_nodeport_tg.arn
 }
 
+resource "aws_iam_policy" "s3_bot_policy" {
+  name        = "ImageBotS3Access"
+  description = "Allow bot to upload and download files to S3 bucket"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Action = [
+        "s3:PutObject",
+        "s3:GetObject"
+      ],
+      Resource = "arn:aws:s3:::${var.s3_bucket_name}/*"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "s3_bot_attach" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = aws_iam_policy.s3_bot_policy.arn
+}
+
 
