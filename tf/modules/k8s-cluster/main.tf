@@ -344,5 +344,52 @@ resource "aws_iam_role_policy_attachment" "s3_bot_attach" {
   role       = aws_iam_role.ssm_role.name
   policy_arn = aws_iam_policy.s3_bot_policy.arn
 }
+resource "aws_iam_policy" "yolo_sqs_policy" {
+  name        = "YoloSQSAccess"
+  description = "Allow YOLO service to read from SQS queue"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes"
+        ],
+        Resource = "${var.sqs_queue_arn}"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "yolo_dynamodb_policy" {
+  name        = "YoloDynamoDBAccess"
+  description = "Allow YOLO service to read/write DynamoDB"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem"
+        ],
+        Resource = "${var.dynamodb_table_arn}"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "yolo_sqs_attach" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = aws_iam_policy.yolo_sqs_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "yolo_dynamodb_attach" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = aws_iam_policy.yolo_dynamodb_policy.arn
+}
 
 
