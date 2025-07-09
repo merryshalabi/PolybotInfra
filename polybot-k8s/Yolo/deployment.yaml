@@ -18,7 +18,7 @@ spec:
         - name: yolo
           image: merryshalabi/yolo-dev:34
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
           envFrom:
             - secretRef:
                 name: yolo-env
@@ -40,18 +40,6 @@ spec:
     app: yolo
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
+      port: 80          # Client-facing port
+      targetPort: 8081  # Inside container
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: service-yolo
-spec:
-  selector:
-    app: yolo
-  ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
