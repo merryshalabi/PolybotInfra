@@ -380,6 +380,7 @@ resource "aws_iam_policy" "yolo_dynamodb_policy" {
   })
 }
 
+
 resource "aws_iam_role_policy_attachment" "yolo_sqs_attach" {
   role       = aws_iam_role.ssm_role.name
   policy_arn = aws_iam_policy.yolo_sqs_policy.arn
