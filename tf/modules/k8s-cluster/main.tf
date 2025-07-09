@@ -233,8 +233,6 @@ resource "aws_security_group" "worker_sg" {
     cidr_blocks = ["10.0.0.0/16"]
   }
 
-
-
   egress {
     description = "Allow all outbound traffic"
     from_port   = 0
@@ -381,6 +379,7 @@ resource "aws_iam_policy" "yolo_dynamodb_policy" {
     ]
   })
 }
+
 
 resource "aws_iam_role_policy_attachment" "yolo_sqs_attach" {
   role       = aws_iam_role.ssm_role.name
