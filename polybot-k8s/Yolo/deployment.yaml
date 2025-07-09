@@ -21,7 +21,7 @@ spec:
             - containerPort: 8081
           envFrom:
             - secretRef:
-                name: yolo-secrets
+                name: yolo-env-secret
           resources:
             requests:
               cpu: 200m
