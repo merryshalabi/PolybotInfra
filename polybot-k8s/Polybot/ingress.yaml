@@ -2,16 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: polybot
-  namespace: polybot-dev
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
-  tls:
-    - hosts:
-        - merry-bot.fursa.click
-      secretName: tls-secret-jspmv
   rules:
     - host: merry-bot.fursa.click
       http:
