@@ -11,7 +11,7 @@ spec:
   tls:
     - hosts:
         - merry-bot.fursa.click
-      secretName: tls-secret
+      secretName: tls-secret-jspmv
   rules:
     - host: merry-bot.fursa.click
       http:
