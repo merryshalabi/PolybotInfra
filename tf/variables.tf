@@ -48,16 +48,29 @@ variable "acm_cert_arn" {
   description = "ARN of the ACM certificate for the HTTPS listener"
   type        = string
 }
-variable "s3_bucket_name" {
+variable "s3_bucket_name_dev" {
   description = "S3 bucket name used for uploading images from the bot"
   type        = string
 }
-variable "dynamodb_table_arn" {
+variable "dynamodb_table_arn_dev" {
   description = "ARN of the DynamoDB table used by the YOLO service"
   type        = string
 }
 
-variable "sqs_queue_arn" {
+variable "sqs_queue_arn_dev" {
+  description = "ARN of the SQS queue used by the YOLO service"
+  type        = string
+}
+variable "s3_bucket_name_prod" {
+  description = "S3 bucket name used for uploading images from the bot"
+  type        = string
+}
+variable "dynamodb_table_arn_prod" {
+  description = "ARN of the DynamoDB table used by the YOLO service"
+  type        = string
+}
+
+variable "sqs_queue_arn_prod" {
   description = "ARN of the SQS queue used by the YOLO service"
   type        = string
 }

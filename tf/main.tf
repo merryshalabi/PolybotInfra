@@ -50,9 +50,12 @@ module "k8s_cluster" {
   min_size          = var.min_size
   max_size          = var.max_size
   acm_cert_arn     = var.acm_cert_arn
-  s3_bucket_name   = var.s3_bucket_name
-  dynamodb_table_arn = var.dynamodb_table_arn
-  sqs_queue_arn = var.sqs_queue_arn
+  s3_bucket_name_dev  = var.s3_bucket_name_dev
+  dynamodb_table_arn_dev = var.dynamodb_table_arn_dev
+  sqs_queue_arn_dev = var.sqs_queue_arn_dev
+  s3_bucket_name_prod  = var.s3_bucket_name_prod
+  dynamodb_table_arn_prod = var.dynamodb_table_arn_prod
+  sqs_queue_arn_prod = var.sqs_queue_arn_prod
 
 }
 
