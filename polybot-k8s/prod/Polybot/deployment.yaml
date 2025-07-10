@@ -17,7 +17,7 @@ spec:
       containers:
         - name: polybot
 
-          image: merryshalabi/polybot-prod:10
+          image: merryshalabi/polybot-prod:12
           ports:
             - containerPort: 8000
           envFrom:
