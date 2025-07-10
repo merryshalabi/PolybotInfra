@@ -349,6 +349,29 @@ resource "aws_iam_policy" "s3_bot_policy" {
   })
 }
 
+resource "aws_iam_policy" "polybot_send_sqs_policy" {
+  name        = "PolybotSendSQS"
+  description = "Allow bot to send messages to Polybot SQS queue"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "sqs:SendMessage"
+        ],
+        Resource = "arn:aws:sqs:eu-west-2:228281126655:polybot-chat-messages-merry-dev"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "polybot_send_sqs_attach" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = aws_iam_policy.polybot_send_sqs_policy.arn
+}
+
+
 resource "aws_iam_role_policy_attachment" "s3_bot_attach" {
   role       = aws_iam_role.ssm_role.name
   policy_arn = aws_iam_policy.s3_bot_policy.arn
