@@ -143,6 +143,7 @@ resource "aws_launch_template" "worker" {
     }
 
 
+
   tag_specifications {
     resource_type = "instance"
 
@@ -333,8 +334,8 @@ resource "aws_autoscaling_attachment" "nginx_asg_lb_attachment" {
   lb_target_group_arn   = aws_lb_target_group.nginx_nodeport_tg.arn
 }
 
-resource "aws_iam_policy" "s3_bot_policy" {
-  name        = "ImageBotS3Access"
+resource "aws_iam_policy" "s3_bot_policy_dev" {
+  name        = "ImageBotS3Access-dev"
   description = "Allow bot to upload and download files to S3 bucket"
   policy      = jsonencode({
     Version = "2012-10-17",
@@ -344,13 +345,29 @@ resource "aws_iam_policy" "s3_bot_policy" {
         "s3:PutObject",
         "s3:GetObject"
       ],
-      Resource = "arn:aws:s3:::${var.s3_bucket_name}/*"
+      Resource = "arn:aws:s3:::${var.s3_bucket_name_dev}/*"
     }]
   })
 }
 
-resource "aws_iam_policy" "polybot_send_sqs_policy" {
-  name        = "PolybotSendSQS"
+resource "aws_iam_policy" "s3_bot_policy_prod" {
+  name        = "ImageBotS3Access-prod"
+  description = "Allow bot to upload and download files to S3 bucket"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Action = [
+        "s3:PutObject",
+        "s3:GetObject"
+      ],
+      Resource = "arn:aws:s3:::${var.s3_bucket_name_prod}/*"
+    }]
+  })
+}
+
+resource "aws_iam_policy" "polybot_send_sqs_policy_dev" {
+  name        = "PolybotSendSQS-dev"
   description = "Allow bot to send messages to Polybot SQS queue"
   policy      = jsonencode({
     Version = "2012-10-17",
@@ -360,24 +377,52 @@ resource "aws_iam_policy" "polybot_send_sqs_policy" {
         Action = [
           "sqs:SendMessage"
         ],
-        Resource = "arn:aws:sqs:eu-west-2:228281126655:polybot-chat-messages-merry-dev"
+        Resource = "${var.sqs_queue_arn_dev}"
       }
     ]
   })
 }
 
-resource "aws_iam_role_policy_attachment" "polybot_send_sqs_attach" {
+resource "aws_iam_policy" "polybot_send_sqs_policy_prod" {
+  name        = "PolybotSendSQS-prod"
+  description = "Allow bot to send messages to Polybot SQS queue"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "sqs:SendMessage"
+        ],
+        Resource = "${var.sqs_queue_arn_prod}"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "polybot_send_sqs_attach_dev" {
   role       = aws_iam_role.ssm_role.name
-  policy_arn = aws_iam_policy.polybot_send_sqs_policy.arn
+  policy_arn = aws_iam_policy.polybot_send_sqs_policy_dev.arn
+}
+
+resource "aws_iam_role_policy_attachment" "polybot_send_sqs_attach_prod" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = aws_iam_policy.polybot_send_sqs_policy_prod.arn
+}
+
+resource "aws_iam_role_policy_attachment" "s3_bot_attach_dev" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = aws_iam_policy.s3_bot_policy_dev.arn
+}
+
+resource "aws_iam_role_policy_attachment" "s3_bot_attach_prod" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = aws_iam_policy.s3_bot_policy_prod.arn
 }
 
 
-resource "aws_iam_role_policy_attachment" "s3_bot_attach" {
-  role       = aws_iam_role.ssm_role.name
-  policy_arn = aws_iam_policy.s3_bot_policy.arn
-}
-resource "aws_iam_policy" "yolo_sqs_policy" {
-  name        = "YoloSQSAccess"
+resource "aws_iam_policy" "yolo_sqs_policy_dev" {
+  name        = "YoloSQSAccess-dev"
   description = "Allow YOLO service to read from SQS queue"
   policy      = jsonencode({
     Version = "2012-10-17",
@@ -389,14 +434,33 @@ resource "aws_iam_policy" "yolo_sqs_policy" {
           "sqs:DeleteMessage",
           "sqs:GetQueueAttributes"
         ],
-        Resource = "${var.sqs_queue_arn}"
+        Resource = "${var.sqs_queue_arn_dev}"
       }
     ]
   })
 }
 
-resource "aws_iam_policy" "yolo_dynamodb_policy" {
-  name        = "YoloDynamoDBAccess"
+resource "aws_iam_policy" "yolo_sqs_policy_prod" {
+  name        = "YoloSQSAccess-prod"
+  description = "Allow YOLO service to read from SQS queue"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes"
+        ],
+        Resource = "${var.sqs_queue_arn_prod}"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "yolo_dynamodb_policy_dev" {
+  name        = "YoloDynamoDBAccess-dev"
   description = "Allow YOLO service to read/write DynamoDB"
   policy      = jsonencode({
     Version = "2012-10-17",
@@ -408,75 +472,15 @@ resource "aws_iam_policy" "yolo_dynamodb_policy" {
           "dynamodb:PutItem",
           "dynamodb:UpdateItem"
         ],
-        Resource = "${var.dynamodb_table_arn}"
-      }
-    ]
-  })
-}
-
-
-resource "aws_iam_role_policy_attachment" "yolo_sqs_attach" {
-  role       = aws_iam_role.ssm_role.name
-  policy_arn = aws_iam_policy.yolo_sqs_policy.arn
-}
-
-resource "aws_iam_role_policy_attachment" "yolo_dynamodb_attach" {
-  role       = aws_iam_role.ssm_role.name
-  policy_arn = aws_iam_policy.yolo_dynamodb_policy.arn
-}
-
-resource "aws_iam_policy" "s3_bot_policy_prod" {
-  name        = "ImageBotS3AccessProd"
-  description = "Allow bot to access prod S3 bucket"
-  policy      = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = ["s3:PutObject", "s3:GetObject"],
-        Resource = "arn:aws:s3:::merry-polybot-images"
-      }
-    ]
-  })
-}
-
-resource "aws_iam_policy" "polybot_send_sqs_policy_prod" {
-  name        = "PolybotSendSQSProd"
-  description = "Allow polybot to send to prod SQS"
-  policy      = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = ["sqs:SendMessage"],
-        Resource = "arn:aws:sqs:eu-west-2:228281126655:polybot-chat-messages-merry"
-      }
-    ]
-  })
-}
-
-resource "aws_iam_policy" "yolo_sqs_policy_prod" {
-  name        = "YoloSQSAccessProd"
-  description = "Allow YOLO to read from prod SQS"
-  policy      = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = [
-          "sqs:ReceiveMessage",
-          "sqs:DeleteMessage",
-          "sqs:GetQueueAttributes"
-        ],
-        Resource = "arn:aws:sqs:eu-west-2:228281126655:polybot-chat-messages-merry"
+        Resource = "${var.dynamodb_table_arn_dev}"
       }
     ]
   })
 }
 
 resource "aws_iam_policy" "yolo_dynamodb_policy_prod" {
-  name        = "YoloDynamoDBAccessProd"
-  description = "Allow YOLO to read/write prod DynamoDB"
+  name        = "YoloDynamoDBAccess-prod"
+  description = "Allow YOLO service to read/write DynamoDB"
   policy      = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -487,20 +491,16 @@ resource "aws_iam_policy" "yolo_dynamodb_policy_prod" {
           "dynamodb:PutItem",
           "dynamodb:UpdateItem"
         ],
-        Resource = "arn:aws:dynamodb:eu-west-2:228281126655:table/PredictionsProd-merry"
+        Resource = "${var.dynamodb_table_arn_prod}"
       }
     ]
   })
 }
 
-resource "aws_iam_role_policy_attachment" "polybot_send_sqs_attach_prod" {
-  role       = aws_iam_role.ssm_role.name
-  policy_arn = aws_iam_policy.polybot_send_sqs_policy_prod.arn
-}
 
-resource "aws_iam_role_policy_attachment" "s3_bot_attach_prod" {
+resource "aws_iam_role_policy_attachment" "yolo_sqs_attach_dev" {
   role       = aws_iam_role.ssm_role.name
-  policy_arn = aws_iam_policy.s3_bot_policy_prod.arn
+  policy_arn = aws_iam_policy.yolo_sqs_policy_dev.arn
 }
 
 resource "aws_iam_role_policy_attachment" "yolo_sqs_attach_prod" {
@@ -508,9 +508,12 @@ resource "aws_iam_role_policy_attachment" "yolo_sqs_attach_prod" {
   policy_arn = aws_iam_policy.yolo_sqs_policy_prod.arn
 }
 
+resource "aws_iam_role_policy_attachment" "yolo_dynamodb_attach_dev" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = aws_iam_policy.yolo_dynamodb_policy_dev.arn
+}
+
 resource "aws_iam_role_policy_attachment" "yolo_dynamodb_attach_prod" {
   role       = aws_iam_role.ssm_role.name
   policy_arn = aws_iam_policy.yolo_dynamodb_policy_prod.arn
 }
-
-
