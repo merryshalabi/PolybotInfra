@@ -150,6 +150,17 @@ resource "aws_launch_template" "worker" {
       Name = "k8s-worker"
     }
   }
+
+  block_device_mappings {
+    device_name = "/dev/xvda"
+
+    ebs {
+      volume_size           = 20
+      volume_type           = "gp3"
+      delete_on_termination = true
+    }
+  }
+
 }
 
 resource "aws_autoscaling_group" "worker_asg" {
