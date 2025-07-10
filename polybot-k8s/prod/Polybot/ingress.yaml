@@ -12,6 +12,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: service-polybot
+                name: service-polybot-prod
                 port:
                   number: 8000
