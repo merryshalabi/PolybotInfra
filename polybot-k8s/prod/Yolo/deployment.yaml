@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yolo
+  namespace: polybot-prod
+  labels:
+    app: yolo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: yolo
+  template:
+    metadata:
+      labels:
+        app: yolo
+    spec:
+      containers:
+        - name: yolo
+          image: docker.io/merryshalabi/yolo-prod:46
+          ports:
+            - containerPort: 8081
+          envFrom:
+            - secretRef:
+                name: yolo-env-secret
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+

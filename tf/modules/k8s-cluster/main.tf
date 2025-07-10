@@ -425,4 +425,92 @@ resource "aws_iam_role_policy_attachment" "yolo_dynamodb_attach" {
   policy_arn = aws_iam_policy.yolo_dynamodb_policy.arn
 }
 
+resource "aws_iam_policy" "s3_bot_policy_prod" {
+  name        = "ImageBotS3AccessProd"
+  description = "Allow bot to access prod S3 bucket"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = ["s3:PutObject", "s3:GetObject"],
+        Resource = "arn:aws:s3:::merry-polybot-images-prod/*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "polybot_send_sqs_policy_prod" {
+  name        = "PolybotSendSQSProd"
+  description = "Allow polybot to send to prod SQS"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = ["sqs:SendMessage"],
+        Resource = "arn:aws:sqs:eu-west-2:228281126655:polybot-chat-messages-merry"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "yolo_sqs_policy_prod" {
+  name        = "YoloSQSAccessProd"
+  description = "Allow YOLO to read from prod SQS"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes"
+        ],
+        Resource = "arn:aws:sqs:eu-west-2:228281126655:polybot-chat-messages-merry"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "yolo_dynamodb_policy_prod" {
+  name        = "YoloDynamoDBAccessProd"
+  description = "Allow YOLO to read/write prod DynamoDB"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem"
+        ],
+        Resource = "arn:aws:dynamodb:eu-west-2:228281126655:table/PredictionsProd-merry"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "polybot_send_sqs_attach_prod" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = aws_iam_policy.polybot_send_sqs_policy_prod.arn
+}
+
+resource "aws_iam_role_policy_attachment" "s3_bot_attach_prod" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = aws_iam_policy.s3_bot_policy_prod.arn
+}
+
+resource "aws_iam_role_policy_attachment" "yolo_sqs_attach_prod" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = aws_iam_policy.yolo_sqs_policy_prod.arn
+}
+
+resource "aws_iam_role_policy_attachment" "yolo_dynamodb_attach_prod" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = aws_iam_policy.yolo_dynamodb_policy_prod.arn
+}
+
 
