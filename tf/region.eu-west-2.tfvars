@@ -14,6 +14,6 @@ dynamodb_table_arn_dev = "arn:aws:dynamodb:eu-west-2:228281126655:table/Predicti
 s3_bucket_name_prod    = "merry-polybot-images"
 sqs_queue_arn_prod       = "arn:aws:sqs:eu-west-2:228281126655:polybot-chat-messages-merry"
 dynamodb_table_arn_prod = "arn:aws:dynamodb:eu-west-2:228281126655:table/PredictionsProd-merry"
-
+acm_cert_arn_dev = "arn:aws:acm:eu-west-2:228281126655:certificate/88586420-34c8-4019-b4df-50b812f63466"
 
 

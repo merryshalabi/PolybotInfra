@@ -75,3 +75,8 @@ variable "sqs_queue_arn_prod" {
   type        = string
 }
 
+variable "acm_cert_arn_dev" {
+  description = "ARN of the ACM certificate for the HTTPS listener"
+  type        = string
+}
+

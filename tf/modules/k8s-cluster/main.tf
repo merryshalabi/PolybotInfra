@@ -310,6 +310,12 @@ resource "aws_lb_listener" "https_listener" {
   }
 }
 
+resource "aws_lb_listener_certificate" "dev_cert" {
+  listener_arn    = aws_lb_listener.https_listener.arn
+  certificate_arn = var.acm_cert_arn_dev
+}
+
+
 
 resource "aws_lb_target_group" "nginx_nodeport_tg" {
   name        = "nginx-nodeport-tg"

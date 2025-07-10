@@ -56,6 +56,7 @@ module "k8s_cluster" {
   s3_bucket_name_prod  = var.s3_bucket_name_prod
   dynamodb_table_arn_prod = var.dynamodb_table_arn_prod
   sqs_queue_arn_prod = var.sqs_queue_arn_prod
+  acm_cert_arn_dev= var.acm_cert_arn_dev
 
 }
 
