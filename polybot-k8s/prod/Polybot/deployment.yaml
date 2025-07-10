@@ -28,7 +28,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-polybot
+  name: service-polybot-prod
 spec:
   selector:
     app: polybot
@@ -41,7 +41,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-polybot-external
+  name: service-polybot-external-prod
 spec:
   type: NodePort
   selector:
