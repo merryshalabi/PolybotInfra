@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: yolo
-          image: merryshalabi/yolo-dev:34
+          image: merryshalabi/yolo-dev:35
           ports:
             - containerPort: 8081
           envFrom:
