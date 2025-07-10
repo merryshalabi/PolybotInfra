@@ -434,7 +434,7 @@ resource "aws_iam_policy" "s3_bot_policy_prod" {
       {
         Effect = "Allow",
         Action = ["s3:PutObject", "s3:GetObject"],
-        Resource = "arn:aws:s3:::merry-polybot-images-prod/*"
+        Resource = "arn:aws:s3:::merry-polybot-images"
       }
     ]
   })
