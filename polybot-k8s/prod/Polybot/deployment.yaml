@@ -17,7 +17,7 @@ spec:
       containers:
         - name: polybot
 
-          image: merryshalabi/polybot-prod:12
+          image: merryshalabi/polybot-prod:13
           ports:
             - containerPort: 8000
           envFrom:
@@ -36,6 +36,4 @@ spec:
     - protocol: TCP
       port: 8000
       targetPort: 8000
-
-
 
