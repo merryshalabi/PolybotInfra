@@ -221,17 +221,17 @@ resource "aws_security_group" "worker_sg" {
   }
 
   ingress {
-    description     = "Allow LB to access Ingress NodePort (31183)"
-    from_port       = 31183
-    to_port         = 31183
+    description     = "Allow LB to access Ingress NodePort (32528)"
+    from_port       = 32528
+    to_port         = 32528
     protocol        = "tcp"
     security_groups = [aws_security_group.lb_sg.id]
   }
 
   ingress {
     description = "Allow NodePort range"
-    from_port   = 31741
-    to_port     = 31741
+    from_port   = 32477
+    to_port     = 32477
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
 
@@ -319,7 +319,7 @@ resource "aws_lb_listener_certificate" "dev_cert" {
 
 resource "aws_lb_target_group" "nginx_nodeport_tg" {
   name        = "nginx-nodeport-tg"
-  port        = 31183
+  port        = 32528
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
   target_type = "instance"
