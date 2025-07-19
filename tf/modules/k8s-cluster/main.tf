@@ -237,6 +237,7 @@ resource "aws_security_group" "worker_sg" {
 
   }
 
+
   ingress {
     description = "Allow all traffic from within VPC"
     from_port   = 0
